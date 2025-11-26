@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Vis à bois 5x50mm",
+    "description": "Lot de 100 vis à bois galvanisées pour vos projets de bricolage",
+    "price": 7.50,
+    "category": "Fixations",
+    "stock": 200,
+    "rating": 4.6,
+    "featured": false,
+    "image": "/images/vis_bois.jpg"
+  },
+  {
+    "name": "Tournevis cruciforme",
+    "description": "Tournevis de précision pour vis cruciformes",
+    "price": 5.50,
+    "category": "Outils à main",
+    "stock": 150,
+    "rating": 4.2,
+    "featured": true,
+    "image": "/images/tournevis.jpg"
+  },
+  {
+    "name": "Marteau de charpentier",
+    "description": "Marteau avec manche en bois et tête en acier trempé",
+    "price": 12.00,
+    "category": "Outils à main",
+    "stock": 80,
+    "rating": 4.8,
+    "featured": true,
+    "image": "/images/marteau.jpg"
+  },
+  {
+    "name": "Perceuse électrique 500W",
+    "description": "Perceuse filaire idéale pour percer le bois et le métal",
+    "price": 55.00,
+    "category": "Électroportatif",
+    "stock": 40,
+    "rating": 4.5,
+    "featured": true,
+    "image": "/images/perceuse.jpg"
+  },
+  {
+    "name": "Clous acier 3cm",
+    "description": "Lot de 500 clous pour construction et bricolage",
+    "price": 6.00,
+    "category": "Fixations",
+    "stock": 300,
+    "rating": 4.3,
+    "featured": false,
+    "image": "/images/clous.jpg"
+  },
+  {
+    "name": "Peinture blanche mate 2L",
+    "description": "Peinture pour murs et plafonds, finition mate",
+    "price": 18.90,
+    "category": "Peinture & accessoires",
+    "stock": 50,
+    "rating": 4.4,
+    "featured": true,
+    "image": "/images/peinture_blanc.jpg"
+  },
+  {
+    "name": "Serre-joint 50cm",
+    "description": "Serre-joint robuste pour travaux de menuiserie",
+    "price": 15.00,
+    "category": "Outils à main",
+    "stock": 60,
+    "rating": 4.6,
+    "featured": false,
+    "image": "/images/serre_joint.jpg"
+  },
+  {
+    "name": "Ruban isolant électrique",
+    "description": "Ruban isolant pour installations électriques, lot de 5",
+    "price": 3.50,
+    "category": "Électricité",
+    "stock": 100,
+    "rating": 4.1,
+    "featured": false,
+    "image": "/images/ruban_electrique.jpg"
+  },
+  {
+    "name": "Clé à molette 30cm",
+    "description": "Clé ajustable pour plomberie et mécanique",
+    "price": 10.50,
+    "category": "Outils à main",
+    "stock": 70,
+    "rating": 4.7,
+    "featured": true,
+    "image": "/images/cle_molette.jpg"
+  },
+  {
+    "name": "Tuyau PVC 3m",
+    "description": "Tuyau PVC pour plomberie domestique",
+    "price": 8.50,
+    "category": "Plomberie",
+    "stock": 120,
+    "rating": 4.5,
+    "featured": false,
+    "image": "/images/tuyeau_pvc.jpg"
+  }
+]

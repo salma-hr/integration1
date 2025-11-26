@@ -1,74 +1,19 @@
-import { Heart, Home, SearchIcon, User, LogOut, ShoppingBag, Menu, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
-
-// Hook d'authentification simulé (à créer dans un fichier séparé)
-const useAuth = () => {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setIsLoading(false);
-  }, []);
-
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-  };
-
-  const mockLogin = (email, password) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        let userData;
-        if (email.includes('admin')) {
-          userData = { 
-            id: 1, 
-            name: 'Admin User', 
-            email: email, 
-            role: 'admin',
-            points: 5000
-          };
-        } else if (email.includes('seller')) {
-          userData = { 
-            id: 2, 
-            name: 'Seller User', 
-            email: email, 
-            role: 'seller',
-            points: 1000
-          };
-        } else {
-          userData = { 
-            id: 3, 
-            name: 'Buyer User', 
-            email: email, 
-            role: 'buyer',
-            points: 500
-          };
-        }
-        login(userData);
-        resolve(userData);
-      }, 1000);
-    });
-  };
-
-  return { user, login, logout, mockLogin, isLoading };
-};
+import { Heart, SearchIcon, User, LogOut, ShoppingBag, Menu, X } from 'lucide-react';
+import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext'; 
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
+  const { getCartItemsCount } = useCart(); // Utilisation du contexte panier
+  const navigate = useNavigate();
 
-  // Liens de navigation de base
+  const cartItemsCount = getCartItemsCount();
+
   const baseNavLinks = [
     { label: 'Home', href: '/' },
     { label: 'About', href: '#' },
@@ -77,16 +22,16 @@ export default function Navbar() {
 
   // Liens selon le statut de connexion
   const getNavLinks = () => {
-    if (user) {
+    if (currentUser) {
       const userLinks = [
         ...baseNavLinks,
         { label: 'My Profile', href: '/profile' },
       ];
 
-      if (user.role === 'seller') {
+      if (currentUser.role === 'seller') {
         userLinks.push({ label: 'Seller Dashboard', href: '/seller' });
       }
-      if (user.role === 'admin') {
+      if (currentUser.role === 'admin') {
         userLinks.push({ label: 'Admin', href: '/admin' });
       }
 
@@ -102,7 +47,7 @@ export default function Navbar() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery)}`;
+      navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
     }
   };
 
@@ -110,12 +55,7 @@ export default function Navbar() {
     logout();
     setShowUserMenu(false);
     setMobileMenuOpen(false);
-    window.location.href = '/';
-  };
-
-  const navigateTo = (path) => {
-    window.location.href = path;
-    setMobileMenuOpen(false);
+    navigate('/');
   };
 
   const navLinks = getNavLinks();
@@ -132,23 +72,23 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo/Brand */}
-            <div 
-              className="flex-shrink-0 font-bold text-lg text-black cursor-pointer" 
-              onClick={() => navigateTo('/')}
+            <Link 
+              to="/" 
+              className="flex-shrink-0 font-bold text-lg text-black cursor-pointer"
             >
               Logo
-            </div>
+            </Link>
 
             {/* Center navigation links - Desktop */}
             <div className="hidden md:flex items-center gap-8">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
-                  href={link.href}
+                  to={link.href}
                   className="text-black text-sm font-medium hover:opacity-70 transition-opacity"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
 
@@ -175,27 +115,18 @@ export default function Navbar() {
               <button
                 aria-label="Shopping Cart"
                 className="text-black hover:opacity-70 transition-opacity relative"
-                onClick={() => navigateTo(user ? '/cart' : '/login')}
+                onClick={() => navigate(currentUser ? '/cart' : '/login')} // Changé vers '/cart'
               >
                 <ShoppingBag className="w-5 h-5" />
-                {user && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">
-                    0
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                    {cartItemsCount}
                   </span>
                 )}
               </button>
 
-              {/* Heart icon - Favorites */}
-              <button
-                aria-label="Favorites"
-                className="text-black hover:opacity-70 transition-opacity hidden sm:block"
-                onClick={() => navigateTo(user ? '/favorites' : '/login')}
-              >
-                <Heart className="w-5 h-5" />
-              </button>
-
               {/* User menu or Login */}
-              {user ? (
+              {currentUser ? (
                 <div className="relative">
                   <button
                     aria-label="User menu"
@@ -206,7 +137,7 @@ export default function Navbar() {
                       <User className="w-4 h-4" />
                     </div>
                     <span className="hidden lg:block text-sm">
-                      {user.name}
+                      {currentUser.name}
                     </span>
                   </button>
 
@@ -215,41 +146,49 @@ export default function Navbar() {
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
                       <div className="px-4 py-2 text-sm text-gray-700 border-b">
                         Signed in as <br />
-                        <strong>{user.email}</strong>
-                        {user.points && (
-                          <div className="text-xs text-green-600 mt-1">
-                            {user.points} points
-                          </div>
-                        )}
+                        <strong>{currentUser.email}</strong>
+                        <div className="text-xs text-green-600 mt-1 capitalize">
+                          {currentUser.role}
+                        </div>
                       </div>
-                      <a
-                        href="/profile"
+                      <Link
+                        to="/profile"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => setShowUserMenu(false)}
                       >
                         My Profile
-                      </a>
-                      {user.role === 'seller' && (
-                        <a
-                          href="/seller"
+                      </Link>
+                      {currentUser.role === 'seller' && (
+                        <Link
+                          to="/seller"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           onClick={() => setShowUserMenu(false)}
                         >
                           Seller Dashboard
-                        </a>
+                        </Link>
                       )}
-                      {user.role === 'admin' && (
-                        <a
-                          href="/admin"
+                      {currentUser.role === 'admin' && (
+                        <Link
+                          to="/admin"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           onClick={() => setShowUserMenu(false)}
                         >
                           Admin Panel
-                        </a>
+                        </Link>
                       )}
+                      <div className="border-t mt-1 pt-1">
+                        <Link
+                          to="/checkout"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          <ShoppingBag className="w-4 h-4" />
+                          Panier ({cartItemsCount})
+                        </Link>
+                      </div>
                       <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 mt-1"
                       >
                         <LogOut className="w-4 h-4" />
                         Sign Out
@@ -261,7 +200,7 @@ export default function Navbar() {
                 <button
                   aria-label="Login"
                   className="text-black hover:opacity-70 transition-opacity flex items-center gap-2"
-                  onClick={() => navigateTo('/login')}
+                  onClick={() => navigate('/login')}
                 >
                   <User className="w-5 h-5" />
                   <span className="hidden lg:block text-sm">Login</span>
@@ -300,22 +239,32 @@ export default function Navbar() {
           <div className="md:hidden bg-white border-t border-gray-200 py-2">
             <div className="px-4 space-y-2">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
-                  href={link.href}
+                  to={link.href}
                   className="block py-2 text-black text-sm font-medium hover:bg-gray-50 rounded px-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
               
+              {/* Mobile cart link */}
+              <Link
+                to={currentUser ? '/checkout' : '/login'}
+                className="flex items-center gap-2 py-2 text-black text-sm font-medium hover:bg-gray-50 rounded px-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <ShoppingBag className="w-4 h-4" />
+                Panier {cartItemsCount > 0 && `(${cartItemsCount})`}
+              </Link>
+              
               {/* Mobile-only user actions */}
-              {user && (
+              {currentUser && (
                 <>
                   <div className="border-t pt-2 mt-2">
                     <div className="px-2 py-1 text-xs text-gray-500">
-                      Logged in as: {user.email}
+                      Logged in as: {currentUser.email}
                     </div>
                     <button
                       onClick={handleLogout}
@@ -345,3 +294,4 @@ export default function Navbar() {
     </>
   );
 }
+

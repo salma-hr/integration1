@@ -50,7 +50,20 @@ const loginUser = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+const getProfile = async (req, res) => {
+    try {
+        res.status(200).json({
+            _id: req.user._id,
+            name: req.user.name,
+            email: req.user.email,
+            phone: req.user.phone,
+            role: req.user.role
+        });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
-module.exports = { signupUser, loginUser };
+module.exports = { signupUser, loginUser, getProfile };
     
 
