@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Star, Filter, Loader } from 'lucide-react';
 import { productAPI } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import './Products.css';
+import { Search, Star, Filter, Loader, Package2 } from 'lucide-react';
+
 
 function Products() {
   const { currentUser } = useAuth();
@@ -124,7 +125,7 @@ function Products() {
                     <img src={product.image} alt={product.name} />
                   ) : (
                     <div className="image-placeholder">
-                      <Package size={24} />
+                      <Package2 size={24} />
                     </div>
                   )}
                 </div>
